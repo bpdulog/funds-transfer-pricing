@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d1110">
+    <title>Funds Transfer Pricing (FTP) Explainer — Bryan Dulog</title>
+    <meta name="description" content="An interactive visual guide demonstrating how commercial banks price loans, reward deposits, and isolate interest rate risk using Funds Transfer Pricing (FTP).">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="app">
+      <!-- Top Navigation -->
+      <nav class="site-nav">
+        <div class="nav-brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="5" rx="2"/>
+              <line x1="2" x2="22" y1="10" y2="10"/>
+            </svg>
+          </div>
+          <span>FTP Interactive Explainer</span>
+        </div>
+        <div class="nav-links">
+          <a href="#illusion" class="nav-link">The 3% Illusion</a>
+          <a href="#architecture" class="nav-link">Architecture</a>
+          <a href="#simulator" class="nav-link">Live Simulator</a>
+          <a href="#stress-test" class="nav-link">Rate Shock & SVB</a>
+          <a href="#deep-dive" class="nav-link">Deep Dive</a>
+          <a href="https://bpdulog.github.io" class="nav-external" target="_blank" rel="noreferrer">
+            <span>Portfolio</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </a>
+          <a href="https://github.com/bpdulog/funds-transfer-pricing" class="nav-external" target="_blank" rel="noreferrer">
+            <span>GitHub</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Hero Section -->
+      <header class="hero">
+        <p class="eyebrow">Banking Architecture & Asset-Liability Management</p>
+        <h1>The Engine Inside Every Modern Bank: <em>Funds Transfer Pricing</em></h1>
+        <p class="hero-copy">
+          Most people assume banks simply take deposits at 1% and lend at 4% to pocket the 3% difference.
+          In reality, doing so without <strong>Funds Transfer Pricing (FTP)</strong> creates catastrophic interest rate risk.
+          Explore how modern banks break this illusion, isolate risks, and accurately price money.
+        </p>
+        <div class="hero-tags">
+          <span class="tag-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Matched-Maturity Transfer Pricing (MMTP)
+          </span>
+          <span class="tag-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Zero Duration Risk for Lenders
+          </span>
+          <span class="tag-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+            Deposit Franchise Value
+          </span>
+          <span class="tag-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>
+            Central Treasury Clearinghouse
+          </span>
+        </div>
+      </header>
+
+      <!-- Section 1: The 3% Spread Illusion -->
+      <section id="illusion" class="section">
+        <div class="section-head">
+          <p class="section-label">The Core Dilemma</p>
+          <h2 class="section-title">The "3% Spread" Illusion vs. Modern Reality</h2>
+          <p class="section-subtitle">
+            Why traditional pooled banking breaks down when interest rates move, and how FTP isolates commercial credit risk from balance-sheet interest rate risk.
+          </p>
+        </div>
+
+        <div class="comparison-grid">
+          <!-- The Flawed Model -->
+          <article class="comparison-card flawed">
+            <span class="comparison-badge">The Flawed Model &bull; Pooled Funding</span>
+            <h3>Direct Customer-to-Customer Lending</h3>
+            <p>
+              The bank pools all retail checking deposits paying <strong>1.00%</strong> and directly funds a 30-year fixed commercial loan at <strong>4.00%</strong>. The loan officer claims victory for a "3.00% net margin".
+            </p>
+            <div class="diagram-box">
+              Depositor (1.00%) &rarr; [Single Bank Bucket] &rarr; Borrower (4.00%)<br>
+              Reported Spread: <b class="good">+3.00% Net Profit</b><br>
+              Hidden Trap: <b class="bad">Maturity Mismatch (Overnight vs. 30 Years)</b><br>
+              When Fed Hikes +300 bps: Depositor wants 4.00%, Loan stays at 4.00%.<br>
+              Result: <b class="bad">0.00% Margin & Massive Balance Sheet Capital Loss!</b>
+            </div>
+          </article>
+
+          <!-- The Modern FTP Model -->
+          <article class="comparison-card modern">
+            <span class="comparison-badge">Modern Banking &bull; Matched-Maturity FTP</span>
+            <h3>Central Treasury as an Internal Clearinghouse</h3>
+            <p>
+              Neither the branch manager nor the loan officer touches duration risk. Central Treasury buys funding from the branch and sells it to the loan desk at market-matched curve rates.
+            </p>
+            <div class="diagram-box">
+              Branch Desk: Pays 1.00%, sells to Treasury at 3.50% &rarr; <b class="good">+2.50% Franchise Spread</b><br>
+              Lending Desk: Buys at 3.50% from Treasury, lends at 5.25% &rarr; <b class="good">+1.75% Credit Spread</b><br>
+              Treasury Desk: Absorbs the term gap & hedges it via swaps.<br>
+              When Fed Hikes +300 bps: <b class="good">Both Desk Margins Remain 100% Protected!</b>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Section 2: Interactive Flow Diagram -->
+      <section id="architecture" class="section">
+        <div class="section-head">
+          <p class="section-label">Architecture</p>
+          <h2 class="section-title">The Internal Money Flow Architecture</h2>
+          <p class="section-subtitle">
+            Click on any unit in the banking chain to inspect its role, economic equation, and how FTP isolates risks.
+          </p>
+        </div>
+
+        <div class="glass-panel flow-container">
+          <div class="flow-header">
+            <div>
+              <p class="eyebrow" style="margin-bottom:4px;">Interactive Topology</p>
+              <h3 style="margin:0;font-family:Georgia,serif;font-size:1.35rem;">How Money & Margins Move Internally</h3>
+            </div>
+            <div class="flow-interactive-tip">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Click a node to inspect its risk mandate and margin formula</span>
+            </div>
+          </div>
+
+          <div class="flow-nodes-wrapper">
+            <!-- Node 1: Depositor -->
+            <div class="flow-node" data-node="depositor">
+              <div class="node-role">
+                <span>External</span>
+                <span class="badge" style="background:rgba(247,241,227,0.1);">Provider</span>
+              </div>
+              <h4 class="node-name">Retail Depositor</h4>
+              <div class="node-metrics">
+                <div><span>Deposit Principal:</span><strong id="diagDepositAmt">$10,000,000</strong></div>
+                <div><span>Interest Received:</span><strong id="diagDepositRate" style="color:var(--teal);">1.25%</strong></div>
+              </div>
+            </div>
+
+            <!-- Arrow 1 -->
+            <div class="flow-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              <span>Deposits In</span>
+            </div>
+
+            <!-- Node 2: Deposit / Branch Desk -->
+            <div class="flow-node" data-node="branch">
+              <div class="node-role">
+                <span>Business Unit</span>
+                <span class="badge" style="background:var(--teal-dim);color:var(--teal);">Liability Unit</span>
+              </div>
+              <h4 class="node-name">Retail Branch Desk</h4>
+              <div class="node-metrics">
+                <div><span>FTP Credit Received:</span><strong id="diagBranchCredit">4.10%</strong></div>
+                <div><span>Desk Spread Earned:</span><strong id="diagBranchSpread" style="color:var(--teal);">+2.85%</strong></div>
+              </div>
+            </div>
+
+            <!-- Arrow 2 -->
+            <div class="flow-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              <span>Sells Liquidity</span>
+            </div>
+
+            <!-- Node 3: Central Treasury -->
+            <div class="flow-node node-treasury active-node" data-node="treasury">
+              <div class="node-role">
+                <span>Clearinghouse</span>
+                <span class="badge" style="background:linear-gradient(135deg,#f1e2b8,#b98d36);color:#101413;">Central ALM</span>
+              </div>
+              <h4 class="node-name">Central Treasury</h4>
+              <div class="node-metrics">
+                <div><span>Matched Loan Cost:</span><strong id="diagTreasuryLoanCost">4.60%</strong></div>
+                <div><span>Net Repricing Spread:</span><strong id="diagTreasurySpread" style="color:var(--accent);">+0.50%</strong></div>
+              </div>
+            </div>
+
+            <!-- Arrow 3 -->
+            <div class="flow-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              <span>Funds Loan</span>
+            </div>
+
+            <!-- Node 4: Commercial Lending Desk -->
+            <div class="flow-node" data-node="lending">
+              <div class="node-role">
+                <span>Business Unit</span>
+                <span class="badge" style="background:var(--accent-dim);color:var(--accent);">Asset Unit</span>
+              </div>
+              <h4 class="node-name">Commercial Lending</h4>
+              <div class="node-metrics">
+                <div><span>FTP Borrowing Rate:</span><strong id="diagLendingCost">4.60%</strong></div>
+                <div><span>Credit Margin Earned:</span><strong id="diagLendingSpread" style="color:var(--accent);">+1.90%</strong></div>
+              </div>
+            </div>
+
+            <!-- Arrow 4 -->
+            <div class="flow-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              <span>Lends Out</span>
+            </div>
+
+            <!-- Node 5: Commercial Borrower -->
+            <div class="flow-node" data-node="borrower">
+              <div class="node-role">
+                <span>External</span>
+                <span class="badge" style="background:rgba(247,241,227,0.1);">Customer</span>
+              </div>
+              <h4 class="node-name">Commercial Borrower</h4>
+              <div class="node-metrics">
+                <div><span>Loan Principal:</span><strong id="diagLoanAmt">$10,000,000</strong></div>
+                <div><span>Interest Paid:</span><strong id="diagLoanRate" style="color:var(--accent);">6.50%</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer for Clicked Node Details -->
+          <div class="flow-detail-drawer" id="flowDrawer">
+            <div class="drawer-info">
+              <h4 id="drawerTitle">Central Treasury & Asset-Liability Management (ALM)</h4>
+              <p id="drawerDesc">
+                Acts as the internal bank of the bank. It buys wholesale liquidity from deposit branches at the matched market rate and lends it to commercial loan desks. It centralizes all interest rate duration risk and hedges it in financial markets.
+              </p>
+            </div>
+            <div class="drawer-formula">
+              <span id="drawerFormulaLabel">Treasury Repricing Margin</span>
+              <strong id="drawerFormulaValue">Loan FTP Rate (4.60%) &minus; Deposit FTP Rate (4.10%) = +0.50%</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Interactive Live Simulator -->
+      <section id="simulator" class="section">
+        <div class="section-head">
+          <p class="section-label">Interactive Workbench</p>
+          <h2 class="section-title">Matched-Maturity FTP Simulator</h2>
+          <p class="section-subtitle">
+            Configure loan parameters, deposit behavior, and market yield curves. Observe in real time how profitability is divided among lending, retail deposits, and central treasury.
+          </p>
+        </div>
+
+        <div class="simulator-layout">
+          <!-- Left Controls Sidebar -->
+          <aside class="glass-panel sim-controls" aria-label="FTP Simulation Parameters">
+            <p class="section-label">Market Yield Curve</p>
+            <div class="curve-presets">
+              <button class="preset-btn active" data-curve="normal" type="button">Normal (Steep)</button>
+              <button class="preset-btn" data-curve="inverted" type="button">Inverted</button>
+              <button class="preset-btn" data-curve="flat" type="button">Flat (4.50%)</button>
+            </div>
+
+            <!-- Commercial Loan Block -->
+            <div class="control-group">
+              <p class="section-label" style="color:var(--accent);">Commercial Loan (Asset)</p>
+              <div class="control-row">
+                <div class="control-label-row">
+                  <span>Loan Principal</span>
+                  <span class="control-val" id="valLoanAmt">$10,000,000</span>
+                </div>
+                <input type="range" id="inputLoanAmt" min="1000000" max="50000000" step="500000" value="10000000">
+                <div class="range-minmax"><span>$1M</span><span>$50M</span></div>
+              </div>
+
+              <div class="control-row">
+                <div class="control-label-row">
+                  <span>Customer Loan Rate</span>
+                  <span class="control-val" id="valLoanRate">6.50%</span>
+                </div>
+                <input type="range" id="inputLoanRate" min="3.0" max="10.0" step="0.05" value="6.50">
+                <div class="range-minmax"><span>3.00%</span><span>10.00%</span></div>
+              </div>
+
+              <div class="control-row">
+                <div class="control-label-row">
+                  <span>Loan Tenor (Maturity)</span>
+                  <span class="control-val" id="valLoanTenor">5 Years</span>
+                </div>
+                <select class="select-box" id="selectLoanTenor">
+                  <option value="1">1 Year</option>
+                  <option value="2">2 Years</option>
+                  <option value="3">3 Years</option>
+                  <option value="5" selected>5 Years</option>
+                  <option value="7">7 Years</option>
+                  <option value="10">10 Years</option>
+                  <option value="30">30 Years</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Retail Deposit Block -->
+            <div class="control-group">
+              <p class="section-label" style="color:var(--teal);">Retail Deposit (Liability)</p>
+              <div class="control-row">
+                <div class="control-label-row">
+                  <span>Deposit Amount</span>
+                  <span class="control-val" id="valDepositAmt">$10,000,000</span>
+                </div>
+                <input type="range" id="inputDepositAmt" min="1000000" max="50000000" step="500000" value="10000000">
+                <div class="range-minmax"><span>$1M</span><span>$50M</span></div>
+              </div>
+
+              <div class="control-row">
+                <div class="control-label-row">
+                  <span>Depositor Paid Rate</span>
+                  <span class="control-val" id="valDepositRate">1.25%</span>
+                </div>
+                <input type="range" id="inputDepositRate" min="0.0" max="5.0" step="0.05" value="1.25">
+                <div class="range-minmax"><span>0.00%</span><span>5.00%</span></div>
+              </div>
+
+              <div class="control-row">
+                <div class="control-label-row">
+                  <span>Deposit Behavioral Tenor</span>
+                  <span class="control-val" id="valDepositTenor">1 Year</span>
+                </div>
+                <select class="select-box" id="selectDepositTenor">
+                  <option value="0.25">3 Months (Volatile / Flighty)</option>
+                  <option value="0.5">6 Months</option>
+                  <option value="1" selected>1 Year (Sticky Retail)</option>
+                  <option value="2">2 Years</option>
+                  <option value="3">3 Years (Core Non-Maturity)</option>
+                  <option value="5">5 Years (Long-Term Term CD)</option>
+                </select>
+              </div>
+
+              <div class="control-row">
+                <div class="control-label-row">
+                  <span>Deposit Beta (Pass-Through)</span>
+                  <span class="control-val" id="valDepositBeta">40%</span>
+                </div>
+                <input type="range" id="inputDepositBeta" min="0" max="100" step="5" value="40">
+                <div class="range-minmax"><span>0% (Sticky Checking)</span><span>100% (High-Yield CD)</span></div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Right Results Column -->
+          <div class="sim-results">
+            <!-- 4 Metric Cards -->
+            <div class="metric-grid">
+              <!-- Lending Desk Margin -->
+              <article class="metric">
+                <span class="metric-label">Lending Desk Margin</span>
+                <strong id="metricLendingSpread">+1.90%</strong>
+                <span class="metric-sub">
+                  Annual: <span id="metricLendingDol">$190,000</span>
+                  <span class="bps" id="metricLendingBps">(190 bps)</span>
+                </span>
+              </article>
+
+              <!-- Deposit Desk Margin -->
+              <article class="metric">
+                <span class="metric-label">Deposit Desk Margin</span>
+                <strong id="metricDepositSpread">+2.85%</strong>
+                <span class="metric-sub">
+                  Annual: <span id="metricDepositDol">$285,000</span>
+                  <span class="bps" id="metricDepositBps">(285 bps)</span>
+                </span>
+              </article>
+
+              <!-- Central Treasury Net Gap -->
+              <article class="metric">
+                <span class="metric-label">Central Treasury Gap</span>
+                <strong id="metricTreasurySpread">+0.50%</strong>
+                <span class="metric-sub">
+                  Annual: <span id="metricTreasuryDol">$50,000</span>
+                  <span class="bps" id="metricTreasuryBps">(50 bps)</span>
+                </span>
+              </article>
+
+              <!-- Total Bank Net Spread -->
+              <article class="metric total-metric">
+                <span class="metric-label">Total Bank Net Spread</span>
+                <strong id="metricTotalSpread">+5.25%</strong>
+                <span class="metric-sub">
+                  Annual: <span id="metricTotalDol">$525,000</span>
+                  <span class="bps" id="metricTotalBps">(525 bps)</span>
+                </span>
+              </article>
+            </div>
+
+            <!-- Margin Stack / Waterfall Bar -->
+            <div class="glass-panel waterfall-card">
+              <div class="waterfall-header">
+                <div>
+                  <p class="eyebrow" style="margin-bottom:2px;">Margin Decomposition</p>
+                  <h3>Who Truly Creates the Bank's Profit?</h3>
+                </div>
+                <div style="font-family:ui-monospace;font-size:0.85rem;color:var(--cream);font-weight:700;">
+                  Customer Spread: <span id="valTotalSpreadSum">5.25%</span>
+                </div>
+              </div>
+
+              <!-- Stacked visual bar -->
+              <div class="waterfall-bar" id="waterfallBar">
+                <div class="bar-segment bar-loan" id="barLoan" style="width: 36%;">Lending (36%)</div>
+                <div class="bar-segment bar-deposit" id="barDeposit" style="width: 54%;">Deposit Desk (54%)</div>
+                <div class="bar-segment bar-treasury" id="barTreasury" style="width: 10%;">Treasury (10%)</div>
+              </div>
+
+              <div class="waterfall-legend">
+                <div class="legend-item"><span class="legend-dot" style="background:#d8b45f;"></span><span>Lending Desk (Credit Underwriting Margin)</span></div>
+                <div class="legend-item"><span class="legend-dot" style="background:#2dd4bf;"></span><span>Deposit Desk (Retail Franchise Liquidity Value)</span></div>
+                <div class="legend-item"><span class="legend-dot" style="background:#a78bfa;"></span><span>Central Treasury (Term Transformation Repricing Spread)</span></div>
+              </div>
+            </div>
+
+            <!-- Yield Curve Chart -->
+            <div class="glass-panel chart-shell">
+              <div class="chart-header">
+                <div>
+                  <p class="eyebrow" style="margin-bottom:2px;">Benchmark Yield Curve</p>
+                  <h3>Matched-Maturity Pricing Points</h3>
+                </div>
+                <div class="chart-legend">
+                  <span><i class="gold-dot"></i>Loan Tenor FTP (<span id="legendLoanRate">4.60%</span>)</span>
+                  <span><i class="teal-dot"></i>Deposit Tenor FTP (<span id="legendDepositRate">4.10%</span>)</span>
+                  <span><i class="line-dot"></i>Market Curve</span>
+                </div>
+              </div>
+              <canvas id="curveCanvas" width="900" height="250" aria-label="Benchmark Yield Curve"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Stress Test / SVB Case -->
+      <section id="stress-test" class="section">
+        <div class="section-head">
+          <p class="section-label">Stress Testing & Risk Isolation</p>
+          <h2 class="section-title">The Rate Shock: Why SVB Failed vs. How FTP Protects You</h2>
+          <p class="section-subtitle">
+            Move the interest rate shock slider to see how unexpected central bank rate increases impact an unhedged bank vs. a bank running matched-maturity FTP.
+          </p>
+        </div>
+
+        <div class="glass-panel stress-shell">
+          <div class="shock-slider-box">
+            <div class="shock-header">
+              <div>
+                <strong style="font-size:1.05rem;display:block;">Central Bank Rate Shock (&Delta; Market Rates)</strong>
+                <span style="font-size:0.82rem;color:var(--muted);">Simulates instant parallel shift across all benchmark market tenors</span>
+              </div>
+              <div class="shock-val" id="valShock">+0 bps (Baseline)</div>
+            </div>
+            <input type="range" id="inputShock" min="-200" max="300" step="25" value="0">
+            <div class="range-minmax"><span>-200 bps (Aggressive Cuts)</span><span>0 bps</span><span>+300 bps (Aggressive Hikes)</span></div>
+          </div>
+
+          <div class="stress-comparison-grid">
+            <!-- Scenario 1: Unhedged Pooled Bank (SVB Style) -->
+            <article class="stress-card unhedged">
+              <div class="stress-card-head">
+                <h4>1. Traditional Pooled Bank (No FTP)</h4>
+                <span class="status-badge danger" id="badgeUnhedged">Exposed Duration</span>
+              </div>
+              <ul class="stress-metrics-list">
+                <li><span>Fixed Loan Revenue:</span><strong id="shockUnhedgedLoanRev">6.50% ($650,000)</strong></li>
+                <li><span>Deposit Funding Cost:</span><strong id="shockUnhedgedDepositCost" style="color:var(--rose);">1.25% ($125,000)</strong></li>
+                <li><span>Bank Net Interest Margin:</span><strong id="shockUnhedgedNim" style="color:var(--cream);">+5.25% ($525,000)</strong></li>
+                <li><span>Commercial Loan Desk Perception:</span><strong id="shockUnhedgedLendingImp">"Everything is fine"</strong></li>
+              </ul>
+              <div class="stress-verdict" id="verdictUnhedged">
+                As market rates rise, sticky deposits reprice upward or exit. Because the 5-year loan yield is permanently locked, the bank's net margin shrinks rapidly, and underwater fixed assets wipe out equity capital if forced to liquidate.
+              </div>
+            </article>
+
+            <!-- Scenario 2: Modern Matched-Maturity FTP Bank -->
+            <article class="stress-card hedged">
+              <div class="stress-card-head">
+                <h4>2. Modern Bank with Matched-Maturity FTP</h4>
+                <span class="status-badge safe" id="badgeHedged">Risk Isolated</span>
+              </div>
+              <ul class="stress-metrics-list">
+                <li><span>Lending Desk Protected Spread:</span><strong id="shockHedgedLendingSpread" style="color:var(--teal);">+1.90% (Locked)</strong></li>
+                <li><span>Deposit Desk Franchise Spread:</span><strong id="shockHedgedDepositSpread" style="color:var(--teal);">+2.85% (Adjusted)</strong></li>
+                <li><span>Treasury Net Gap Impact:</span><strong id="shockHedgedTreasuryImpact" style="color:var(--accent);">Absorbed by ALM</strong></li>
+                <li><span>ALM Hedge Status:</span><strong style="color:var(--emerald);">Payer Swaps Active</strong></li>
+              </ul>
+              <div class="stress-verdict" id="verdictHedged">
+                The loan officer's margin is 100% insulated at +1.90% because their 5-year borrowing cost was locked with Treasury on origination day. The interest rate duration risk sits solely in Central Treasury, where professional portfolio managers hedge it via interest rate swaps.
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Deep Dive Concepts & FAQ -->
+      <section id="deep-dive" class="section">
+        <div class="section-head">
+          <p class="section-label">Core Concepts</p>
+          <h2 class="section-title">Essential Questions in Funds Transfer Pricing</h2>
+          <p class="section-subtitle">
+            How leading financial institutions, treasurers, and risk committees manage complex balance-sheet dynamics.
+          </p>
+        </div>
+
+        <div class="accordion-list">
+          <!-- Accordion 1 -->
+          <div class="accordion-item open">
+            <button class="accordion-btn" type="button">
+              <span>Why can't deposit branches just keep all the loan interest?</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content">
+              <p>
+                In a bank without FTP, branches that gather deposits are treated as "cost centers" because they generate expenses (branch rent, tellers, ATMs) and pay interest, while lending desks look like "superstar profit centers" because they book big loan coupons.
+              </p>
+              <p>
+                <strong>FTP fixes this distorted incentive.</strong> When a branch gathers $10 million in low-cost checking accounts, Treasury "buys" that funding at the market rate (e.g. 4.10%). The branch earns a credit of 4.10% &minus; 1.25% paid = <b>+2.85% pure franchise profit</b>. Branch managers are fairly rewarded for bringing sticky, low-cost liquidity to the bank.
+              </p>
+            </div>
+          </div>
+
+          <!-- Accordion 2 -->
+          <div class="accordion-item">
+            <button class="accordion-btn" type="button">
+              <span>How do banks price checking accounts with no stated maturity?</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content">
+              <p>
+                Checking and consumer savings accounts are <b>Non-Maturity Deposits (NMDs)</b>. Technically, customers can withdraw their balance in 5 seconds on their phone.
+              </p>
+              <p>
+                However, statistically, a large portion of retail deposits never leaves the bank—they are "sticky core deposits." Banks use <b>Behavioral Replication Portfolios</b>:
+              </p>
+              <ul>
+                <li><b>Volatile / Operational Tranche (e.g., 20%):</b> Modeled as 1-month to 3-month overnight funds.</li>
+                <li><b>Core Sticky Tranche (e.g., 80%):</b> Modeled as a moving average ladder of 3-year, 5-year, and 7-year maturities.</li>
+              </ul>
+              <p>
+                This allows the bank to credit branches with a higher, longer-term FTP rate that reflects the true economic stability of core deposits.
+              </p>
+            </div>
+          </div>
+
+          <!-- Accordion 3 -->
+          <div class="accordion-item">
+            <button class="accordion-btn" type="button">
+              <span>What is a Liquidity Premium (LP) & Regulatory Buffer?</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content">
+              <p>
+                A standard yield curve only measures pure risk-free interest rates (like U.S. Treasuries or SOFR). But in the real banking system:
+              </p>
+              <ul>
+                <li><b>Term Liquidity Premium (LP):</b> Long-term funding is scarce and expensive during crises. Treasury charges loans a premium for tying up bank cash for 5, 10, or 30 years.</li>
+                <li><b>Basel III LCR / NSFR Charges:</b> Regulations mandate that banks hold High-Quality Liquid Assets (HQLA) against volatile deposits and illiquid loans. Treasury assigns explicit FTP charges or credits based on how each asset or liability impacts regulatory ratios.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Accordion 4 -->
+          <div class="accordion-item">
+            <button class="accordion-btn" type="button">
+              <span>The 2023 Silicon Valley Bank Case Study in Plain English</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content">
+              <p>
+                Silicon Valley Bank received over $100 billion in surge venture tech deposits between 2020 and 2021. Because tech startups didn't need many loans, SVB invested those deposits into 10-year and 30-year fixed-rate Treasury bonds and agency mortgage-backed securities earning ~1.6%.
+              </p>
+              <p>
+                <b>The Fatal Error:</b> SVB treated these surge deposits as permanent, stable money without properly charging the investment portfolio for the massive duration mismatch or putting on payer interest rate swaps. When the Fed hiked rates to 5%, the market value of those fixed bonds plummeted by $17+ billion, wiping out SVB's tangible common equity and triggering a fatal $42 billion bank run.
+              </p>
+              <p>
+                A rigorous FTP system would have penalized the purchase of 10-year assets funded by tech deposits by charging a heavy duration transfer rate, forcing the bank to hedge or turn away unprofitable flighty deposits.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <p class="footer-copy">
+          Designed and built by <strong>Bryan Dulog</strong> &bull; Banking, Risk & Quantitative Modeling.
+        </p>
+        <div class="footer-links">
+          <a href="https://bpdulog.github.io" target="_blank" rel="noreferrer">Main Portfolio</a>
+          <a href="https://github.com/bpdulog" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/bryandulog/" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="https://bpdulog.github.io/loan-amortization-calculator/" target="_blank" rel="noreferrer">Loan Calculator</a>
+          <a href="https://bpdulog.github.io/dividend-projections/" target="_blank" rel="noreferrer">Dividend Tool</a>
+        </div>
+      </footer>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script src="app.js"></script>
+  </body>
+</html>
