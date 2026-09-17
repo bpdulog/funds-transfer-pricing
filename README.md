@@ -67,6 +67,7 @@ Under a modern **Matched-Maturity Funds Transfer Pricing (MMTP)** framework, the
 ## 🚀 Key Interactive Features
 
 - **Interactive Internal Money Flow Topology**: Click on any participant (Depositor, Branch Desk, Central Treasury, Lending Desk, Borrower) to inspect its exact mandate, risk profile, and margin formula.
+- **Supplemental Architecture Infographic (Rate Stack & Swap Payoff)**: Dual-panel visual explainer showing the vertical coupon allocation ladder (decomposing the customer loan rate with internal FTP strike lines) alongside an options/swap payoff profile ($\Delta = 0$ locked lending spread vs. SVB unhedged collapse curve).
 - **Matched-Maturity Live Workbench**: Sliders for Loan Principal, Customer Rate, Loan Tenor, Deposit Amount, Depositor Rate, Behavioral Tenor, and Deposit Beta.
 - **Real-Time Margin Waterfall**: Visual decomposition showing exactly how customer spread is divided among credit underwriting, branch franchise value, and term transformation.
 - **Dynamic Yield Curve Canvas**: High-DPI canvas rendering benchmark term structures (Normal, Inverted, Flat) with live marker pins for asset and liability transfer pricing points.

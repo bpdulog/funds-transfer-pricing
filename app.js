@@ -337,7 +337,29 @@
     regimeVerdict: document.getElementById('regimeVerdict'),
 
     // Accordion
-    accordions: document.querySelectorAll('.accordion-item')
+    accordions: document.querySelectorAll('.accordion-item'),
+
+    // Supplemental Infographic elements
+    infoLoanRateTitle: document.getElementById('infoLoanRateTitle'),
+    scaleTopRate: document.getElementById('scaleTopRate'),
+    scaleLoanFtp: document.getElementById('scaleLoanFtp'),
+    scaleLoanFtpPoint: document.getElementById('scaleLoanFtpPoint'),
+    scaleDepositFtp: document.getElementById('scaleDepositFtp'),
+    scaleDepositFtpPoint: document.getElementById('scaleDepositFtpPoint'),
+    scaleDepositRate: document.getElementById('scaleDepositRate'),
+    scaleDepositRatePoint: document.getElementById('scaleDepositRatePoint'),
+    tierLending: document.getElementById('tierLending'),
+    infoLendingSpread: document.getElementById('infoLendingSpread'),
+    infoBoundLoanFtp: document.getElementById('infoBoundLoanFtp'),
+    tierTreasury: document.getElementById('tierTreasury'),
+    infoTreasurySpread: document.getElementById('infoTreasurySpread'),
+    infoBoundDepFtp: document.getElementById('infoBoundDepFtp'),
+    tierBranch: document.getElementById('tierBranch'),
+    infoDepositSpread: document.getElementById('infoDepositSpread'),
+    infoBoundDepPaid: document.getElementById('infoBoundDepPaid'),
+    tierDepositor: document.getElementById('tierDepositor'),
+    infoDepositorPaid: document.getElementById('infoDepositorPaid'),
+    payoffCanvas: document.getElementById('payoffCanvas')
   };
 
   // --- Main Calculation & Render Function ---
@@ -425,6 +447,9 @@
 
     // --- Update Curve Regimes Section ---
     updateRegimeSection();
+
+    // --- Update Supplemental Infographic ---
+    updateInfographic(loanFtpRate, depositFtpRate, lendingSpread, depositSpread, treasurySpread);
   }
 
   // --- Stress Test Calculations ---
@@ -852,6 +877,270 @@
     ctx.fillText(`Dep: ${depositFtpRate.toFixed(2)}%`, depX, depY + 16);
   }
 
+  // --- Supplemental Infographic: Rate Stack & Payoff Rendering ---
+  function updateInfographic(loanFtpRate, depositFtpRate, lendingSpread, depositSpread, treasurySpread) {
+    if (!els.infoLoanRateTitle) return;
+
+    // 1. Text & Label Updates
+    els.infoLoanRateTitle.textContent = formatPct(state.loanRate);
+    els.scaleTopRate.textContent = formatPct(state.loanRate);
+    els.scaleLoanFtp.textContent = formatPct(loanFtpRate);
+    els.scaleDepositFtp.textContent = formatPct(depositFtpRate);
+    els.scaleDepositRate.textContent = formatPct(state.depositRate);
+
+    els.infoLendingSpread.textContent = formatPct(lendingSpread, true);
+    els.infoTreasurySpread.textContent = formatPct(treasurySpread, true);
+    els.infoDepositSpread.textContent = formatPct(depositSpread, true);
+    els.infoDepositorPaid.textContent = formatPct(state.depositRate);
+
+    els.infoBoundLoanFtp.textContent = formatPct(loanFtpRate);
+    els.infoBoundDepFtp.textContent = formatPct(depositFtpRate);
+    els.infoBoundDepPaid.textContent = formatPct(state.depositRate);
+
+    // 2. Proportional Flex Tiers
+    const fLending = Math.max(0.2, lendingSpread > 0 ? lendingSpread : 0.2);
+    const fTreasury = Math.max(0.15, treasurySpread > 0 ? treasurySpread : 0.15);
+    const fBranch = Math.max(0.2, depositSpread > 0 ? depositSpread : 0.2);
+    const fDep = Math.max(0.2, state.depositRate > 0 ? state.depositRate : 0.2);
+
+    els.tierLending.style.flex = fLending.toFixed(2);
+    els.tierTreasury.style.flex = fTreasury.toFixed(2);
+    els.tierBranch.style.flex = fBranch.toFixed(2);
+    els.tierDepositor.style.flex = fDep.toFixed(2);
+
+    // 3. Position scale tick markers along vertical height
+    const maxR = Math.max(state.loanRate, 0.01);
+    const pLoanFtp = Math.min(92, Math.max(8, ((maxR - loanFtpRate) / maxR) * 100));
+    const pDepFtp = Math.min(94, Math.max(10, ((maxR - depositFtpRate) / maxR) * 100));
+    const pDepRate = Math.min(97, Math.max(12, ((maxR - state.depositRate) / maxR) * 100));
+
+    els.scaleLoanFtpPoint.style.top = `${pLoanFtp.toFixed(1)}%`;
+    els.scaleDepositFtpPoint.style.top = `${pDepFtp.toFixed(1)}%`;
+    els.scaleDepositRatePoint.style.top = `${pDepRate.toFixed(1)}%`;
+
+    // 4. Payoff Chart
+    drawPayoffCanvas(lendingSpread, depositSpread, treasurySpread, loanFtpRate, depositFtpRate);
+  }
+
+  function drawPayoffCanvas(lendingSpread, depositSpread, treasurySpread, loanFtpRate, depositFtpRate) {
+    const canvas = els.payoffCanvas;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width === 0) return;
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width;
+    const h = rect.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const padLeft = 60;
+    const padRight = 35;
+    const padTop = 28;
+    const padBottom = 42;
+
+    const plotW = w - padLeft - padRight;
+    const plotH = h - padTop - padBottom;
+
+    // X: Shock in bps (-300 to +300)
+    const minShock = -300;
+    const maxShock = 300;
+    function shockToX(bps) {
+      return padLeft + ((bps - minShock) / (maxShock - minShock)) * plotW;
+    }
+
+    // Y: Spread Margin %
+    const totalBankSpread = lendingSpread + depositSpread + treasurySpread;
+    const maxY = Math.max(7.5, Math.ceil(Math.max(totalBankSpread + 1.5, depositSpread + 2.5)));
+    const minY = -1.5;
+
+    function rateToY(r) {
+      return padTop + plotH - ((r - minY) / (maxY - minY)) * plotH;
+    }
+
+    // 1. Grid Lines & Axis Labels
+    ctx.strokeStyle = 'rgba(231, 215, 168, 0.07)';
+    ctx.lineWidth = 1;
+    ctx.font = '10px Inter, sans-serif';
+    ctx.fillStyle = '#b8b2a2';
+    ctx.textAlign = 'right';
+
+    // Horizontal grid ticks (every 1.5% or 2%)
+    const yStep = maxY > 8 ? 2.5 : 2.0;
+    for (let r = 0; r <= maxY; r += yStep) {
+      const y = rateToY(r);
+      if (y >= padTop && y <= padTop + plotH) {
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(padLeft + plotW, y);
+        ctx.stroke();
+
+        ctx.fillText(`${r > 0 ? '+' : ''}${r.toFixed(1)}%`, padLeft - 8, y + 3.5);
+      }
+    }
+
+    // Zero Line (Break-even spread)
+    const yZero = rateToY(0);
+    if (yZero >= padTop && yZero <= padTop + plotH) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(244, 63, 94, 0.4)';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, yZero);
+      ctx.lineTo(padLeft + plotW, yZero);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.7)';
+      ctx.textAlign = 'left';
+      ctx.fillText('0.0% Break-even', padLeft + plotW - 90, yZero - 5);
+      ctx.restore();
+    }
+
+    // Vertical grid & shock markers
+    const shockSteps = [-300, -200, -100, 0, 100, 200, 300];
+    ctx.textAlign = 'center';
+    shockSteps.forEach(bps => {
+      const x = shockToX(bps);
+      ctx.beginPath();
+      ctx.strokeStyle = bps === 0 ? 'rgba(231, 215, 168, 0.28)' : 'rgba(231, 215, 168, 0.07)';
+      ctx.lineWidth = bps === 0 ? 1.5 : 1;
+      if (bps === 0) ctx.setLineDash([4, 3]);
+      else ctx.setLineDash([]);
+      ctx.moveTo(x, padTop);
+      ctx.lineTo(x, padTop + plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const label = bps === 0 ? '0 bps' : (bps > 0 ? `+${bps}` : `${bps}`);
+      ctx.fillStyle = bps === 0 ? '#f1e2b8' : '#b8b2a2';
+      ctx.font = bps === 0 ? 'bold 10px Inter, sans-serif' : '10px Inter, sans-serif';
+      ctx.fillText(label, x, padTop + plotH + 16);
+    });
+
+    // X-axis label
+    ctx.fillStyle = '#b8b2a2';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.fillText('Federal Reserve / Benchmark Interest Rate Shift (Δ bps)', padLeft + plotW / 2, padTop + plotH + 34);
+
+    // 2. Trajectories / Curves
+    const beta = state.depositBeta / 100;
+    const steps = 60;
+    const stepBps = (maxShock - minShock) / steps;
+
+    // A. Unhedged Bank (SVB Style) Line (Rose dashed)
+    ctx.save();
+    ctx.setLineDash([6, 4]);
+    ctx.strokeStyle = '#f43f5e';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const bps = minShock + i * stepBps;
+      const sPct = bps / 100;
+      const unhedgedDepRate = Math.max(0, state.depositRate + sPct * beta);
+      const unhedgedNim = state.loanRate - unhedgedDepRate;
+      const x = shockToX(bps);
+      const y = rateToY(unhedgedNim);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // B. Retail Branch Desk (Teal Line)
+    ctx.strokeStyle = '#2dd4bf';
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const bps = minShock + i * stepBps;
+      const sPct = bps / 100;
+      const depPaidRate = Math.max(0, state.depositRate + sPct * beta);
+      const depFtpRate = depositFtpRate + sPct;
+      const brSpread = depFtpRate - depPaidRate;
+      const x = shockToX(bps);
+      const y = rateToY(brSpread);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // C. Total Hedged Bank (FTP + ALM Swap Hedge) (Emerald Line)
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const bps = minShock + i * stepBps;
+      const sPct = bps / 100;
+      const hedgedTotal = lendingSpread + depositSpread + treasurySpread + (sPct * (1 - beta) * 0.25);
+      const x = shockToX(bps);
+      const y = rateToY(hedgedTotal);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // D. Commercial Lending Desk (Gold Horizontal Line) - ZERO DURATION PAYOFF
+    const yLending = rateToY(lendingSpread);
+    ctx.save();
+    ctx.strokeStyle = '#d8b45f';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = 'rgba(216, 180, 95, 0.4)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(padLeft, yLending);
+    ctx.lineTo(padLeft + plotW, yLending);
+    ctx.stroke();
+    ctx.restore();
+
+    // 3. Marker dots at baseline (0 bps)
+    const xBaseline = shockToX(0);
+
+    // Point on Lending line
+    ctx.save();
+    ctx.fillStyle = '#d8b45f';
+    ctx.beginPath();
+    ctx.arc(xBaseline, yLending, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+    ctx.restore();
+
+    // Label for Lending line
+    ctx.fillStyle = '#f1e2b8';
+    ctx.font = 'bold 10.5px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Lending Desk Spread: ${formatPct(lendingSpread, true)} (Δ = 0 Locked)`, padLeft + 12, yLending - 9);
+
+    // Point on Unhedged Bank line at baseline
+    const unhedgedBaseline = state.loanRate - state.depositRate;
+    const yUnhedgedBase = rateToY(unhedgedBaseline);
+    ctx.save();
+    ctx.fillStyle = '#f43f5e';
+    ctx.beginPath();
+    ctx.arc(xBaseline, yUnhedgedBase, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+
+    // Point on Branch desk at baseline
+    const yBranchBase = rateToY(depositSpread);
+    ctx.save();
+    ctx.fillStyle = '#2dd4bf';
+    ctx.beginPath();
+    ctx.arc(xBaseline, yBranchBase, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+  }
+
   // --- Event Listeners Initialization ---
   function initListeners() {
     // Preset Buttons
@@ -953,8 +1242,13 @@
       const curve = CURVE_MODELS[state.curvePreset];
       const loanFtpRate = interpolateRate(curve, state.loanTenor);
       const depositFtpRate = interpolateRate(curve, state.depositTenor);
+      const lendingSpread = state.loanRate - loanFtpRate;
+      const depositSpread = depositFtpRate - state.depositRate;
+      const treasurySpread = loanFtpRate - depositFtpRate;
+
       drawCurve(curve, loanFtpRate, depositFtpRate);
       updateRegimeSection();
+      updateInfographic(loanFtpRate, depositFtpRate, lendingSpread, depositSpread, treasurySpread);
     });
   }
 

@@ -242,6 +242,235 @@
             </div>
           </div>
         </div>
+
+        <!-- Supplemental Infographic: Rate Stack Waterfall & Swap Payoff Profile -->
+        <div class="glass-panel infographic-shell" id="supplementalInfographic">
+          <div class="infographic-header">
+            <div class="infographic-title-group">
+              <div class="infographic-eyebrow">
+                <span class="infographic-pulse-dot"></span>
+                <span>Supplemental Architecture Explainer</span>
+              </div>
+              <h3 class="infographic-title">The Anatomy of an FTP Spread &amp; Swap Payoff Profile</h3>
+              <p class="infographic-subtitle">
+                Visualizing how the customer loan coupon is dissected between units, and why matched-maturity FTP creates an options-style zero-duration payoff for commercial lenders.
+              </p>
+            </div>
+            <div class="infographic-badge">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+              <span>ALM Clearinghouse Model</span>
+            </div>
+          </div>
+
+          <div class="infographic-grid">
+            <!-- Panel A: Vertical Rate Stack Waterfall -->
+            <div class="infographic-card stack-card">
+              <div class="card-caption">
+                <div class="caption-header">
+                  <span class="caption-num">Panel A</span>
+                  <span class="caption-type">Rate Stack Decomposition</span>
+                </div>
+                <h4>The Rate Stack Waterfall</h4>
+                <p>Decomposing the borrower's <strong id="infoLoanRateTitle">6.50%</strong> coupon into risk &amp; franchise components</p>
+              </div>
+
+              <div class="rate-stack-container">
+                <!-- Axis Scale -->
+                <div class="stack-scale-axis">
+                  <div class="axis-point" style="top: 0%;">
+                    <span class="axis-rate" id="scaleTopRate">6.50%</span>
+                    <span class="axis-label">Borrower Rate</span>
+                  </div>
+                  <div class="axis-point" id="scaleLoanFtpPoint" style="top: 29.2%;">
+                    <span class="axis-rate" id="scaleLoanFtp">4.60%</span>
+                    <span class="axis-label">Loan FTP</span>
+                  </div>
+                  <div class="axis-point" id="scaleDepositFtpPoint" style="top: 36.9%;">
+                    <span class="axis-rate" id="scaleDepositFtp">4.10%</span>
+                    <span class="axis-label">Deposit FTP</span>
+                  </div>
+                  <div class="axis-point" id="scaleDepositRatePoint" style="top: 80.8%;">
+                    <span class="axis-rate" id="scaleDepositRate">1.25%</span>
+                    <span class="axis-label">Depositor Paid</span>
+                  </div>
+                  <div class="axis-point" style="top: 100%;">
+                    <span class="axis-rate">0.00%</span>
+                    <span class="axis-label">Floor</span>
+                  </div>
+                </div>
+
+                <!-- Stacked Bar Column -->
+                <div class="rate-stack-column" id="rateStackColumn">
+                  <!-- Tier 1: Commercial Lending -->
+                  <div class="stack-tier tier-lending" id="tierLending">
+                    <div class="tier-inner">
+                      <div class="tier-top-row">
+                        <span class="tier-role-badge asset">Asset Unit</span>
+                        <strong class="tier-percent" id="infoLendingSpread">+1.90%</strong>
+                      </div>
+                      <div class="tier-name">Commercial Lending Spread</div>
+                      <div class="tier-subtext">Pure Credit Underwriting Risk Margin</div>
+                    </div>
+                  </div>
+
+                  <!-- Strike Line 1: Loan FTP -->
+                  <div class="stack-strike-line strike-loan-ftp">
+                    <div class="strike-label">
+                      <span class="strike-dash"></span>
+                      <span class="strike-pill">Internal Loan FTP Strike: <strong id="infoBoundLoanFtp">4.60%</strong></span>
+                      <span class="strike-dash"></span>
+                    </div>
+                  </div>
+
+                  <!-- Tier 2: Central Treasury -->
+                  <div class="stack-tier tier-treasury" id="tierTreasury">
+                    <div class="tier-inner">
+                      <div class="tier-top-row">
+                        <span class="tier-role-badge alm">Central ALM</span>
+                        <strong class="tier-percent" id="infoTreasurySpread">+0.50%</strong>
+                      </div>
+                      <div class="tier-name">Treasury Maturity Transformation Spread</div>
+                      <div class="tier-subtext">5-Year Asset vs. 1-Year Liability Term Gap</div>
+                    </div>
+                  </div>
+
+                  <!-- Strike Line 2: Deposit FTP -->
+                  <div class="stack-strike-line strike-deposit-ftp">
+                    <div class="strike-label">
+                      <span class="strike-dash"></span>
+                      <span class="strike-pill">Internal Deposit FTP Strike: <strong id="infoBoundDepFtp">4.10%</strong></span>
+                      <span class="strike-dash"></span>
+                    </div>
+                  </div>
+
+                  <!-- Tier 3: Retail Branch Desk -->
+                  <div class="stack-tier tier-branch" id="tierBranch">
+                    <div class="tier-inner">
+                      <div class="tier-top-row">
+                        <span class="tier-role-badge liability">Liability Unit</span>
+                        <strong class="tier-percent" id="infoDepositSpread">+2.85%</strong>
+                      </div>
+                      <div class="tier-name">Deposit Desk Franchise Value</div>
+                      <div class="tier-subtext">Branch Relationship &amp; Liquidity Value</div>
+                    </div>
+                  </div>
+
+                  <!-- External Line: Depositor Cost -->
+                  <div class="stack-strike-line strike-depositor">
+                    <div class="strike-label">
+                      <span class="strike-dash"></span>
+                      <span class="strike-pill">External Depositor Rate: <strong id="infoBoundDepPaid">1.25%</strong></span>
+                      <span class="strike-dash"></span>
+                    </div>
+                  </div>
+
+                  <!-- Tier 4: Retail Depositor Cost of Funds -->
+                  <div class="stack-tier tier-depositor" id="tierDepositor">
+                    <div class="tier-inner">
+                      <div class="tier-top-row">
+                        <span class="tier-role-badge customer">Provider Cost</span>
+                        <strong class="tier-percent" id="infoDepositorPaid">1.25%</strong>
+                      </div>
+                      <div class="tier-name">Interest Paid to Retail Depositor</div>
+                      <div class="tier-subtext">Base Cost of Funding Paid to External Customers</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stack-callout-note">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span><strong>The Internal Boundary Lines:</strong> Neither the borrower nor depositor ever sees the 4.10% or 4.60% internal rates. They serve as internal clearinghouse pricing benchmarks that eliminate inter-departmental conflict and isolate duration risk.</span>
+              </div>
+            </div>
+
+            <!-- Panel B: Swap & Options-Style Payoff Profile -->
+            <div class="infographic-card payoff-card">
+              <div class="card-caption">
+                <div class="caption-header">
+                  <span class="caption-num">Panel B</span>
+                  <span class="caption-type">Derivatives Payoff Analogy</span>
+                </div>
+                <h4>Options / Swap Payoff Profile</h4>
+                <p>Desk margin sensitivity (&Delta;) against market interest rate shocks</p>
+              </div>
+
+              <div class="payoff-canvas-container">
+                <canvas id="payoffCanvas" width="600" height="280" aria-label="FTP Swap Payoff Diagram"></canvas>
+              </div>
+
+              <!-- Payoff Legend -->
+              <div class="payoff-legend-grid">
+                <div class="payoff-legend-row">
+                  <span class="legend-swatch swatch-gold"></span>
+                  <div class="legend-text">
+                    <strong>Lending Desk Payoff (&Delta; = 0):</strong>
+                    <span>Fixed horizontal spread. Locked borrowing cost at origination leaves loan margin 100% immune to rate hikes or cuts.</span>
+                  </div>
+                </div>
+                <div class="payoff-legend-row">
+                  <span class="legend-swatch swatch-teal"></span>
+                  <div class="legend-text">
+                    <strong>Deposit Branch Payoff (&Delta; &gt; 0):</strong>
+                    <span>Upward sloping. Because deposit beta is &lt; 100%, higher market rates expand retail deposit franchise margins.</span>
+                  </div>
+                </div>
+                <div class="payoff-legend-row">
+                  <span class="legend-swatch swatch-rose"></span>
+                  <div class="legend-text">
+                    <strong>Unhedged Bank (SVB Style):</strong>
+                    <span>Severe negative slope (&Delta; &lt; 0). Fixed long-term assets funded by repricing deposits cause margin and equity destruction.</span>
+                  </div>
+                </div>
+                <div class="payoff-legend-row">
+                  <span class="legend-swatch swatch-emerald"></span>
+                  <div class="legend-text">
+                    <strong>Central Treasury IRS Hedge:</strong>
+                    <span>Payer interest rate swap leg absorbs liability repricing and flattens total bank net duration risk to neutral.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="payoff-verdict-banner">
+                <span class="banner-badge">Key Takeaway</span>
+                <span>FTP transforms commercial lending into a <strong>zero-delta synthetic swap</strong>: the lender pays fixed FTP and receives loan coupons, completely insulated from rate volatility.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Principles Strip -->
+          <div class="infographic-triad">
+            <div class="triad-card">
+              <div class="triad-icon-wrap">
+                <span class="triad-num">1</span>
+              </div>
+              <div class="triad-info">
+                <h5>Synthetic Internal Swap</h5>
+                <p>The lending desk effectively buys a fixed-rate funding swap from Treasury on day one. Even if Fed funds rises +500 bps tomorrow, their funding cost never changes.</p>
+              </div>
+            </div>
+
+            <div class="triad-card">
+              <div class="triad-icon-wrap">
+                <span class="triad-num">2</span>
+              </div>
+              <div class="triad-info">
+                <h5>Deposit Franchise Value</h5>
+                <p>Deposit branches get credited for low-cost relationship funding regardless of whether their local market needs loans, decoupling deposit generation from lending appetite.</p>
+              </div>
+            </div>
+
+            <div class="triad-card">
+              <div class="triad-icon-wrap">
+                <span class="triad-num">3</span>
+              </div>
+              <div class="triad-info">
+                <h5>Centralized ALM Duration</h5>
+                <p>Central Treasury isolates the bank-wide term mismatch into a single macro portfolio and hedges it via wholesale interest rate swaps and treasuries in capital markets.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Section 3: Interactive Live Simulator -->

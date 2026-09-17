@@ -549,6 +549,513 @@ a:hover {
   color: var(--teal);
 }
 
+/* ---------------- Supplemental Infographic: Rate Stack & Payoff ---------------- */
+.infographic-shell {
+  margin-top: 32px;
+  padding: 32px 28px;
+}
+
+.infographic-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.infographic-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.infographic-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 10px var(--teal);
+  animation: pulseTeal 2.2s infinite ease-in-out;
+}
+
+@keyframes pulseTeal {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.35); opacity: 1; box-shadow: 0 0 14px var(--teal); }
+}
+
+.infographic-title {
+  margin: 0 0 8px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.infographic-subtitle {
+  margin: 0;
+  max-width: 780px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.infographic-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(247, 241, 227, 0.05);
+  color: var(--cream);
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.infographic-badge svg {
+  color: var(--accent);
+}
+
+.infographic-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(380px, 1.25fr);
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.infographic-card {
+  padding: 24px;
+  border: 1px solid var(--line-light);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.36);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-caption {
+  margin-bottom: 18px;
+}
+
+.caption-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.caption-num {
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.caption-type {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.card-caption h4 {
+  margin: 0 0 6px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  color: var(--cream);
+}
+
+.card-caption p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.card-caption p strong {
+  color: var(--accent);
+}
+
+/* Rate Stack Container */
+.rate-stack-container {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 16px;
+  margin: 12px 0 20px;
+  min-height: 380px;
+}
+
+.stack-scale-axis {
+  position: relative;
+  border-right: 1px dashed var(--line);
+  padding-right: 12px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.axis-point {
+  position: absolute;
+  right: 12px;
+  transform: translateY(-50%);
+  text-align: right;
+  white-space: nowrap;
+  transition: top 0.35s ease;
+}
+
+.axis-rate {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--cream);
+  display: block;
+  line-height: 1.1;
+}
+
+.axis-label {
+  font-size: 0.62rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: Inter, sans-serif;
+}
+
+.rate-stack-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--line-light);
+  padding: 4px;
+}
+
+.stack-tier {
+  padding: 12px 16px;
+  border-radius: 6px;
+  transition: flex 0.35s ease, background 0.25s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 64px;
+}
+
+.tier-lending {
+  background: linear-gradient(135deg, rgba(216, 180, 95, 0.24), rgba(216, 180, 95, 0.08));
+  border-left: 4px solid var(--accent);
+}
+
+.tier-treasury {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.22), rgba(167, 139, 250, 0.07));
+  border-left: 4px solid #a78bfa;
+}
+
+.tier-branch {
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.22), rgba(45, 212, 191, 0.07));
+  border-left: 4px solid var(--teal);
+}
+
+.tier-depositor {
+  background: rgba(247, 241, 227, 0.05);
+  border-left: 4px solid rgba(247, 241, 227, 0.28);
+}
+
+.tier-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tier-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tier-role-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tier-role-badge.asset {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.tier-role-badge.alm {
+  background: rgba(167, 139, 250, 0.18);
+  color: #c4b5fd;
+}
+
+.tier-role-badge.liability {
+  background: var(--teal-dim);
+  color: var(--teal);
+}
+
+.tier-role-badge.customer {
+  background: rgba(247, 241, 227, 0.08);
+  color: var(--muted);
+}
+
+.tier-percent {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--cream);
+}
+
+.tier-lending .tier-percent {
+  color: var(--accent);
+}
+
+.tier-treasury .tier-percent {
+  color: #c4b5fd;
+}
+
+.tier-branch .tier-percent {
+  color: var(--teal);
+}
+
+.tier-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.tier-subtext {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.stack-strike-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 1px 0;
+}
+
+.strike-label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.strike-dash {
+  flex: 1;
+  height: 1px;
+  border-top: 1px dashed var(--line);
+}
+
+.strike-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(13, 17, 16, 0.9);
+  border: 1px solid var(--line);
+  font-size: 0.68rem;
+  font-family: ui-monospace, monospace;
+  color: var(--cream);
+  white-space: nowrap;
+}
+
+.strike-pill strong {
+  color: var(--accent);
+}
+
+.strike-loan-ftp .strike-pill strong {
+  color: var(--accent);
+}
+
+.strike-deposit-ftp .strike-pill strong {
+  color: var(--teal);
+}
+
+.stack-callout-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: rgba(247, 241, 227, 0.04);
+  border: 1px solid var(--line-light);
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: auto;
+}
+
+.stack-callout-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+.stack-callout-note strong {
+  color: var(--cream);
+}
+
+/* Payoff Card Elements */
+.payoff-canvas-container {
+  border: 1px solid var(--line-light);
+  border-radius: 8px;
+  background: rgba(7, 9, 8, 0.6);
+  padding: 10px 6px 6px;
+  margin-bottom: 16px;
+}
+
+#payoffCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.payoff-legend-grid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.payoff-legend-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.swatch-gold {
+  background: #d8b45f;
+  box-shadow: 0 0 8px rgba(216, 180, 95, 0.4);
+}
+
+.swatch-teal {
+  background: #2dd4bf;
+  box-shadow: 0 0 8px rgba(45, 212, 191, 0.4);
+}
+
+.swatch-rose {
+  background: #f43f5e;
+  border: 1px dashed rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.4);
+}
+
+.swatch-emerald {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.legend-text strong {
+  color: var(--cream);
+  margin-right: 4px;
+}
+
+.legend-text span {
+  color: var(--muted);
+}
+
+.payoff-verdict-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(216, 180, 95, 0.12), rgba(45, 212, 191, 0.08));
+  border: 1px solid rgba(231, 215, 168, 0.2);
+  font-size: 0.84rem;
+  color: var(--cream);
+  line-height: 1.5;
+  margin-top: auto;
+}
+
+.banner-badge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.banner-badge strong {
+  color: var(--cream);
+}
+
+/* Bottom Triad Strip */
+.infographic-triad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-light);
+}
+
+.triad-card {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--line-light);
+}
+
+.triad-icon-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  border: 1px solid rgba(216, 180, 95, 0.4);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.triad-info h5 {
+  margin: 0 0 4px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.98rem;
+  color: var(--cream);
+}
+
+.triad-info p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 /* ---------------- Interactive Workspace & Simulator ---------------- */
 .simulator-layout {
   display: grid;
@@ -1392,7 +1899,9 @@ canvas#regimeCanvas {
   }
   .comparison-grid,
   .stress-comparison-grid,
-  .regime-content-grid {
+  .regime-content-grid,
+  .infographic-grid,
+  .infographic-triad {
     grid-template-columns: 1fr;
   }
   .regime-nav {
@@ -1404,6 +1913,13 @@ canvas#regimeCanvas {
 }
 
 @media (max-width: 640px) {
+  .rate-stack-container {
+    grid-template-columns: 65px 1fr;
+    gap: 10px;
+  }
+  .infographic-shell {
+    padding: 20px 16px;
+  }
   .hero h1 {
     font-size: 2.35rem;
   }
