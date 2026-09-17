@@ -47,6 +47,105 @@
     ]
   };
 
+  // --- Yield Curve Regimes for Section 5 ---
+  const REGIME_MODELS = {
+    normal: {
+      title: 'Normal Upward Sloping Curve',
+      badge: 'Expansionary Regime',
+      slopeText: '+1.50%',
+      context: 'Economic expansion with stable inflation expectations. The central bank maintains a neutral overnight rate while long-term bond buyers demand higher term premiums for holding duration.',
+      verdict: 'In a steep curve, Central Treasury earns positive carry (+0.50%) on maturity transformation. The bank enjoys maximum combined NII across credit underwriting, retail liquidity value, and term spread.',
+      curve: [
+        { tenor: 0.083, label: '1M', rate: 3.50 },
+        { tenor: 0.25,  label: '3M', rate: 3.70 },
+        { tenor: 0.5,   label: '6M', rate: 3.90 },
+        { tenor: 1.0,   label: '1Y', rate: 4.10 },
+        { tenor: 2.0,   label: '2Y', rate: 4.25 },
+        { tenor: 3.0,   label: '3Y', rate: 4.40 },
+        { tenor: 5.0,   label: '5Y', rate: 4.60 },
+        { tenor: 7.0,   label: '7Y', rate: 4.85 },
+        { tenor: 10.0,  label: '10Y', rate: 5.20 },
+        { tenor: 30.0,  label: '30Y', rate: 5.50 }
+      ]
+    },
+    flat: {
+      title: 'Flat Yield Curve',
+      badge: 'Late-Cycle Transition',
+      slopeText: '0.00%',
+      context: 'Late-cycle economic stagnation. The central bank has raised short rates to combat inflation while long-term market growth expectations cool.',
+      verdict: 'Term transformation spread drops to exactly 0.00%. All bank NII must be earned strictly from credit underwriting spreads on loans and franchise liquidity value on deposits.',
+      curve: [
+        { tenor: 0.083, label: '1M', rate: 4.50 },
+        { tenor: 0.25,  label: '3M', rate: 4.50 },
+        { tenor: 0.5,   label: '6M', rate: 4.50 },
+        { tenor: 1.0,   label: '1Y', rate: 4.50 },
+        { tenor: 2.0,   label: '2Y', rate: 4.50 },
+        { tenor: 3.0,   label: '3Y', rate: 4.50 },
+        { tenor: 5.0,   label: '5Y', rate: 4.50 },
+        { tenor: 7.0,   label: '7Y', rate: 4.50 },
+        { tenor: 10.0,  label: '10Y', rate: 4.50 },
+        { tenor: 30.0,  label: '30Y', rate: 4.50 }
+      ]
+    },
+    inverted: {
+      title: 'Inverted Tightening Curve',
+      badge: 'Tightening / Recession Warning',
+      slopeText: '-1.20%',
+      context: 'Aggressive central bank rate hiking campaign (e.g. 2022–2023). High policy rates push overnight deposits and short CDs well above long-term 5Y and 10Y yields.',
+      verdict: 'CRITICAL SQUEEZE: Treasury incurs a negative carry on maturity transformation (-0.75%). In a pooled bank without FTP, this inverted mismatch crushes bank NIM, but modern FTP concentrates this risk into Treasury to be neutralized via payer interest rate swaps.',
+      curve: [
+        { tenor: 0.083, label: '1M', rate: 5.45 },
+        { tenor: 0.25,  label: '3M', rate: 5.40 },
+        { tenor: 0.5,   label: '6M', rate: 5.30 },
+        { tenor: 1.0,   label: '1Y', rate: 5.10 },
+        { tenor: 2.0,   label: '2Y', rate: 4.80 },
+        { tenor: 3.0,   label: '3Y', rate: 4.60 },
+        { tenor: 5.0,   label: '5Y', rate: 4.35 },
+        { tenor: 7.0,   label: '7Y', rate: 4.25 },
+        { tenor: 10.0,  label: '10Y', rate: 4.20 },
+        { tenor: 30.0,  label: '30Y', rate: 4.30 }
+      ]
+    },
+    'bear-steep': {
+      title: 'Bear Steepener Curve',
+      badge: 'Fiscal / Inflation Shock',
+      slopeText: '+2.50%',
+      context: 'Surge in long-term sovereign debt supply or stubborn long-run inflation. Long-term 10Y and 30Y yields spike violently while the Fed holds short rates unchanged.',
+      verdict: 'New loan originations become exceptionally profitable due to wide long-term spreads. However, unhedged legacy fixed-rate assets face heavy mark-to-market bond losses.',
+      curve: [
+        { tenor: 0.083, label: '1M', rate: 3.50 },
+        { tenor: 0.25,  label: '3M', rate: 3.60 },
+        { tenor: 0.5,   label: '6M', rate: 3.80 },
+        { tenor: 1.0,   label: '1Y', rate: 4.10 },
+        { tenor: 2.0,   label: '2Y', rate: 4.50 },
+        { tenor: 3.0,   label: '3Y', rate: 4.90 },
+        { tenor: 5.0,   label: '5Y', rate: 5.40 },
+        { tenor: 7.0,   label: '7Y', rate: 5.80 },
+        { tenor: 10.0,  label: '10Y', rate: 6.10 },
+        { tenor: 30.0,  label: '30Y', rate: 6.40 }
+      ]
+    },
+    'bull-steep': {
+      title: 'Bull Steepener (Emergency Cuts)',
+      badge: 'Recessionary Stimulus',
+      slopeText: '+2.50%',
+      context: 'Emergency central bank rate cuts to stimulate a weakened economy (e.g. 2008 or 2020). Overnight policy rates plunge to near zero while longer yields fall more slowly.',
+      verdict: 'Immediate windfall expansion in bank NIM: deposit funding costs drop instantly toward zero, while pre-existing commercial loans continue generating high locked fixed yields.',
+      curve: [
+        { tenor: 0.083, label: '1M', rate: 1.75 },
+        { tenor: 0.25,  label: '3M', rate: 2.00 },
+        { tenor: 0.5,   label: '6M', rate: 2.25 },
+        { tenor: 1.0,   label: '1Y', rate: 2.75 },
+        { tenor: 2.0,   label: '2Y', rate: 3.25 },
+        { tenor: 3.0,   label: '3Y', rate: 3.70 },
+        { tenor: 5.0,   label: '5Y', rate: 4.15 },
+        { tenor: 7.0,   label: '7Y', rate: 4.35 },
+        { tenor: 10.0,  label: '10Y', rate: 4.50 },
+        { tenor: 30.0,  label: '30Y', rate: 4.80 }
+      ]
+    }
+  };
+
   // Node details metadata for interactive architecture drawer
   const NODE_DETAILS = {
     depositor: {
@@ -84,6 +183,7 @@
   // State
   const state = {
     curvePreset: 'normal',
+    activeRegime: 'normal',
     loanAmt: 10000000,
     loanRate: 6.50,
     loanTenor: 5.0,
@@ -219,6 +319,23 @@
     shockHedgedTreasuryImpact: document.getElementById('shockHedgedTreasuryImpact'),
     verdictHedged: document.getElementById('verdictHedged'),
 
+    // Section 5: Curve Regimes elements
+    regimeTabs: document.querySelectorAll('.regime-tab'),
+    regimeBadge: document.getElementById('regimeBadge'),
+    regimeTitle: document.getElementById('regimeTitle'),
+    regimeSpreadPill: document.getElementById('regimeSpreadPill'),
+    regimeCanvas: document.getElementById('regimeCanvas'),
+    regimeContext: document.getElementById('regimeContext'),
+    regimeTotalNii: document.getElementById('regimeTotalNii'),
+    regimeTotalNim: document.getElementById('regimeTotalNim'),
+    regimeLendingVal: document.getElementById('regimeLendingVal'),
+    regimeDepositVal: document.getElementById('regimeDepositVal'),
+    regimeTreasuryVal: document.getElementById('regimeTreasuryVal'),
+    barRegimeLoan: document.getElementById('barRegimeLoan'),
+    barRegimeDeposit: document.getElementById('barRegimeDeposit'),
+    barRegimeTreasury: document.getElementById('barRegimeTreasury'),
+    regimeVerdict: document.getElementById('regimeVerdict'),
+
     // Accordion
     accordions: document.querySelectorAll('.accordion-item')
   };
@@ -305,6 +422,9 @@
 
     // --- Update Active Node Drawer ---
     updateNodeDrawer();
+
+    // --- Update Curve Regimes Section ---
+    updateRegimeSection();
   }
 
   // --- Stress Test Calculations ---
@@ -545,6 +665,193 @@
     ctx.fillText(`Deposit FTP: ${depositFtpRate.toFixed(2)}%`, depX, depY + 22);
   }
 
+  // --- Section 5: Curve Regimes & NII Calculations ---
+  function updateRegimeSection() {
+    const regime = REGIME_MODELS[state.activeRegime];
+    if (!regime) return;
+
+    // Header info
+    els.regimeBadge.textContent = regime.badge;
+    els.regimeTitle.textContent = regime.title;
+    els.regimeSpreadPill.innerHTML = `10Y &minus; 3M Spread: <strong>${regime.slopeText}</strong>`;
+    els.regimeContext.innerHTML = `<strong>Macro Drivers:</strong> ${regime.context}`;
+    els.regimeVerdict.innerHTML = `<strong>Why FTP Matters Here:</strong> ${regime.verdict}`;
+
+    // Pricing in this regime
+    const loanFtpRate = interpolateRate(regime.curve, state.loanTenor);
+    const depositFtpRate = interpolateRate(regime.curve, state.depositTenor);
+
+    const lendingSpread = state.loanRate - loanFtpRate;
+    const depositSpread = depositFtpRate - state.depositRate;
+    const treasurySpread = loanFtpRate - depositFtpRate;
+
+    const lendingDol = state.loanAmt * (lendingSpread / 100);
+    const depositDol = state.depositAmt * (depositSpread / 100);
+    const treasuryDol = (state.loanAmt * (loanFtpRate / 100)) - (state.depositAmt * (depositFtpRate / 100));
+
+    const totalDol = lendingDol + depositDol + treasuryDol;
+    const totalNim = state.loanRate - state.depositRate;
+
+    els.regimeTotalNii.textContent = formatMoney(totalDol);
+    els.regimeTotalNim.textContent = `(${formatPct(totalNim)} NIM)`;
+
+    els.regimeLendingVal.textContent = `${formatMoney(lendingDol)} (${formatPct(lendingSpread, true)})`;
+    els.regimeDepositVal.textContent = `${formatMoney(depositDol)} (${formatPct(depositSpread, true)})`;
+    els.regimeTreasuryVal.textContent = `${formatMoney(treasuryDol)} (${formatPct(treasurySpread, true)})`;
+
+    // Bar fills
+    const maxVal = Math.max(0.01, Math.abs(lendingDol) + Math.abs(depositDol) + Math.abs(treasuryDol));
+    const pLoan = Math.min(100, Math.max(8, Math.round((Math.max(0, lendingDol) / maxVal) * 100)));
+    const pDep = Math.min(100, Math.max(8, Math.round((Math.max(0, depositDol) / maxVal) * 100)));
+    const pTreasury = Math.min(100, Math.max(4, Math.round((Math.abs(treasuryDol) / maxVal) * 100)));
+
+    els.barRegimeLoan.style.width = `${pLoan}%`;
+    els.barRegimeDeposit.style.width = `${pDep}%`;
+    els.barRegimeTreasury.style.width = `${pTreasury}%`;
+
+    if (treasurySpread < 0) {
+      els.barRegimeTreasury.style.background = 'var(--rose)';
+      els.regimeTreasuryVal.style.color = 'var(--rose)';
+    } else {
+      els.barRegimeTreasury.style.background = '#a78bfa';
+      els.regimeTreasuryVal.style.color = 'var(--cream)';
+    }
+
+    drawRegimeCanvas(regime.curve, loanFtpRate, depositFtpRate);
+  }
+
+  // --- Regime Canvas Drawing ---
+  function drawRegimeCanvas(curveData, loanFtpRate, depositFtpRate) {
+    const canvas = els.regimeCanvas;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width;
+    const h = rect.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const padLeft = 45;
+    const padRight = 25;
+    const padTop = 25;
+    const padBottom = 30;
+
+    const plotW = w - padLeft - padRight;
+    const plotH = h - padTop - padBottom;
+
+    let minRate = 1.0;
+    let maxRate = 7.0;
+    curveData.forEach(pt => {
+      if (pt.rate < minRate) minRate = Math.floor(pt.rate);
+      if (pt.rate > maxRate) maxRate = Math.ceil(pt.rate);
+    });
+
+    const tenors = [0.083, 0.25, 0.5, 1, 2, 3, 5, 7, 10, 30];
+    function tenorToX(tenor) {
+      const idx = tenors.findIndex(t => t >= tenor);
+      if (idx === -1) return padLeft + plotW;
+      if (idx === 0) return padLeft;
+      const tPrev = tenors[idx - 1];
+      const tNext = tenors[idx];
+      const frac = (tenor - tPrev) / (tNext - tPrev);
+      const stepW = plotW / (tenors.length - 1);
+      return padLeft + ((idx - 1) + frac) * stepW;
+    }
+
+    function rateToY(rate) {
+      const norm = (rate - minRate) / (maxRate - minRate);
+      return padTop + plotH - (norm * plotH);
+    }
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(231, 215, 168, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.font = '10px Inter, sans-serif';
+    ctx.fillStyle = '#b8b2a2';
+    ctx.textAlign = 'right';
+
+    const numTicks = 4;
+    for (let i = 0; i <= numTicks; i++) {
+      const r = minRate + (i * (maxRate - minRate)) / numTicks;
+      const y = rateToY(r);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, y);
+      ctx.lineTo(w - padRight, y);
+      ctx.stroke();
+      ctx.fillText(`${r.toFixed(1)}%`, padLeft - 6, y + 3);
+    }
+
+    // X-Axis labels
+    ctx.textAlign = 'center';
+    tenors.forEach((t, i) => {
+      const x = padLeft + (i * plotW) / (tenors.length - 1);
+      const label = curveData[i] ? curveData[i].label : `${t}Y`;
+      ctx.fillText(label, x, h - 10);
+    });
+
+    // Draw Curve Path
+    ctx.beginPath();
+    ctx.strokeStyle = '#2dd4bf';
+    ctx.lineWidth = 2.5;
+
+    curveData.forEach((pt, i) => {
+      const x = padLeft + (i * plotW) / (tenors.length - 1);
+      const y = rateToY(pt.rate);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Gradient fill under curve
+    const grad = ctx.createLinearGradient(0, padTop, 0, h - padBottom);
+    grad.addColorStop(0, 'rgba(45, 212, 191, 0.16)');
+    grad.addColorStop(1, 'rgba(45, 212, 191, 0.0)');
+
+    ctx.lineTo(padLeft + plotW, padTop + plotH);
+    ctx.lineTo(padLeft, padTop + plotH);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Markers for Loan & Deposit
+    const loanX = tenorToX(state.loanTenor);
+    const loanY = rateToY(loanFtpRate);
+    ctx.save();
+    ctx.fillStyle = '#d8b45f';
+    ctx.beginPath();
+    ctx.arc(loanX, loanY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.font = 'bold 10px Inter, sans-serif';
+    ctx.fillStyle = '#f1e2b8';
+    ctx.fillText(`Loan: ${loanFtpRate.toFixed(2)}%`, loanX, loanY - 10);
+
+    const depX = tenorToX(state.depositTenor);
+    const depY = rateToY(depositFtpRate);
+    ctx.save();
+    ctx.fillStyle = '#2dd4bf';
+    ctx.beginPath();
+    ctx.arc(depX, depY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.font = 'bold 10px Inter, sans-serif';
+    ctx.fillStyle = '#2dd4bf';
+    ctx.fillText(`Dep: ${depositFtpRate.toFixed(2)}%`, depX, depY + 16);
+  }
+
   // --- Event Listeners Initialization ---
   function initListeners() {
     // Preset Buttons
@@ -627,12 +934,27 @@
       });
     });
 
-    // Resize listener for Canvas
+    // Regime Tabs click
+    els.regimeTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        els.regimeTabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        state.activeRegime = tab.getAttribute('data-regime');
+        updateRegimeSection();
+      });
+    });
+
+    // Resize listener for Canvases
     window.addEventListener('resize', () => {
       const curve = CURVE_MODELS[state.curvePreset];
       const loanFtpRate = interpolateRate(curve, state.loanTenor);
       const depositFtpRate = interpolateRate(curve, state.depositTenor);
       drawCurve(curve, loanFtpRate, depositFtpRate);
+      updateRegimeSection();
     });
   }
 

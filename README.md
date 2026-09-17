@@ -71,6 +71,7 @@ Under a modern **Matched-Maturity Funds Transfer Pricing (MMTP)** framework, the
 - **Real-Time Margin Waterfall**: Visual decomposition showing exactly how customer spread is divided among credit underwriting, branch franchise value, and term transformation.
 - **Dynamic Yield Curve Canvas**: High-DPI canvas rendering benchmark term structures (Normal, Inverted, Flat) with live marker pins for asset and liability transfer pricing points.
 - **Interest Rate Shock Stress Simulator ($\pm 300\text{ bps}$)**: Observe in real time why an unhedged pooled bank suffers margin compression, while an FTP-enabled bank keeps commercial desks protected and hedges duration in Treasury.
+- **Yield Curve Regimes & NII Sensitivity Matrix**: Interactive 5-regime switcher (Normal Steep, Flat, Inverted Tightening, Bear Steepener, Bull Steepener) demonstrating how term-structure slope dictates bank Net Interest Income (NII) distribution across credit underwriting, retail liquidity value, and maturity transformation.
 - **Case Studies & Deep Dive**: Plain-English explanations of Non-Maturity Deposits (NMD behavioral replication), Liquidity Premiums (LP), and the SVB post-mortem.
 
 ---

@@ -1124,6 +1124,250 @@ canvas#curveCanvas {
   color: var(--accent);
 }
 
+/* ---------------- Curve Regimes & NII Section ---------------- */
+.regimes-container {
+  padding: 28px;
+}
+
+.regime-nav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 6px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--line);
+}
+
+.regime-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 10px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.regime-tab:hover {
+  background: rgba(247, 241, 227, 0.04);
+  color: var(--ink);
+}
+
+.regime-tab.active {
+  background: linear-gradient(145deg, rgba(216, 180, 95, 0.16), rgba(20, 25, 23, 0.95));
+  border-color: rgba(216, 180, 95, 0.5);
+  color: var(--cream);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.regime-name {
+  font-size: 0.85rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.regime-slope {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+}
+
+.regime-slope.positive {
+  color: var(--teal);
+}
+
+.regime-slope.neutral {
+  color: var(--cream);
+}
+
+.regime-slope.negative {
+  color: var(--rose);
+}
+
+.regime-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 22px;
+}
+
+.regime-chart-card,
+.regime-impact-card {
+  padding: 22px;
+  border-radius: 10px;
+  border: 1px solid var(--line-light);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.regime-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.regime-card-header h3 {
+  margin: 4px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.regime-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(216, 180, 95, 0.3);
+}
+
+.regime-spread-pill {
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(247, 241, 227, 0.05);
+  border: 1px solid var(--line);
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.regime-spread-pill strong {
+  font-family: ui-monospace, monospace;
+  color: var(--cream);
+  font-size: 0.95rem;
+  margin-left: 4px;
+}
+
+canvas#regimeCanvas {
+  display: block;
+  width: 100%;
+  height: 220px;
+  border: 1px solid var(--line-light);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #111715, #0c1110);
+  margin-bottom: 14px;
+}
+
+.regime-context-box {
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--line-light);
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.regime-context-box strong {
+  color: var(--cream);
+}
+
+.regime-nii-total {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.regime-nii-total span {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.regime-nii-total strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--cream);
+}
+
+.regime-nii-total small {
+  display: block;
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: var(--teal);
+  font-weight: 800;
+}
+
+.nii-bars-list {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.nii-bar-item {
+  display: grid;
+  gap: 6px;
+}
+
+.nii-bar-labels {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+
+.nii-bar-labels span:nth-child(2) {
+  flex: 1;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.nii-bar-labels strong {
+  font-family: ui-monospace, monospace;
+  color: var(--cream);
+  font-size: 0.88rem;
+}
+
+.desk-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(247, 241, 227, 0.08);
+  overflow: hidden;
+  border: 1px solid rgba(231, 215, 168, 0.1);
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.35s ease, background 0.35s ease;
+}
+
+.regime-verdict {
+  padding: 13px 15px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(216, 180, 95, 0.12), rgba(45, 212, 191, 0.08));
+  border: 1px solid rgba(231, 215, 168, 0.18);
+  font-size: 0.85rem;
+  color: var(--cream);
+  line-height: 1.5;
+}
+
+.regime-verdict strong {
+  color: var(--accent);
+}
+
 /* ---------------- Responsive ---------------- */
 @media (max-width: 1100px) {
   .metric-grid {
@@ -1147,8 +1391,12 @@ canvas#curveCanvas {
     grid-template-columns: 1fr;
   }
   .comparison-grid,
-  .stress-comparison-grid {
+  .stress-comparison-grid,
+  .regime-content-grid {
     grid-template-columns: 1fr;
+  }
+  .regime-nav {
+    grid-template-columns: repeat(2, 1fr);
   }
   .flow-detail-drawer {
     grid-template-columns: 1fr;
@@ -1163,6 +1411,9 @@ canvas#curveCanvas {
     grid-template-columns: 1fr;
   }
   .curve-presets {
+    grid-template-columns: 1fr;
+  }
+  .regime-nav {
     grid-template-columns: 1fr;
   }
   .site-nav {

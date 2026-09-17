@@ -29,6 +29,7 @@
           <a href="#architecture" class="nav-link">Architecture</a>
           <a href="#simulator" class="nav-link">Live Simulator</a>
           <a href="#stress-test" class="nav-link">Rate Shock & SVB</a>
+          <a href="#curve-regimes" class="nav-link">Curve Regimes & NII</a>
           <a href="#deep-dive" class="nav-link">Deep Dive</a>
           <a href="https://bpdulog.github.io" class="nav-external" target="_blank" rel="noreferrer">
             <span>Portfolio</span>
@@ -499,7 +500,122 @@
         </div>
       </section>
 
-      <!-- Section 5: Deep Dive Concepts & FAQ -->
+      <!-- Section 5: Yield Curve Regimes & NII Impact -->
+      <section id="curve-regimes" class="section">
+        <div class="section-head">
+          <p class="section-label">Macro Regimes & Balance Sheet Impact</p>
+          <h2 class="section-title">How Different Yield Curves Shape Bank Net Interest Income</h2>
+          <p class="section-subtitle">
+            Interest rates do not simply move parallel. The <em>slope and shape</em> of the term structure determine whether maturity transformation prints record profits or pushes bank margins into severe contraction.
+          </p>
+        </div>
+
+        <div class="glass-panel regimes-container">
+          <!-- Regime Selector Tabs -->
+          <div class="regime-nav" role="tablist" aria-label="Yield Curve Regimes">
+            <button class="regime-tab active" data-regime="normal" type="button" role="tab" aria-selected="true">
+              <span class="regime-name">1. Normal Steep</span>
+              <span class="regime-slope positive">+150 bps Slope</span>
+            </button>
+            <button class="regime-tab" data-regime="flat" type="button" role="tab" aria-selected="false">
+              <span class="regime-name">2. Flat Curve</span>
+              <span class="regime-slope neutral">0 bps Spread</span>
+            </button>
+            <button class="regime-tab" data-regime="inverted" type="button" role="tab" aria-selected="false">
+              <span class="regime-name">3. Inverted Tightening</span>
+              <span class="regime-slope negative">-110 bps Inversion</span>
+            </button>
+            <button class="regime-tab" data-regime="bear-steep" type="button" role="tab" aria-selected="false">
+              <span class="regime-name">4. Bear Steepener</span>
+              <span class="regime-slope positive">+250 bps Long Surge</span>
+            </button>
+            <button class="regime-tab" data-regime="bull-steep" type="button" role="tab" aria-selected="false">
+              <span class="regime-name">5. Bull Steepener (Cuts)</span>
+              <span class="regime-slope positive">+250 bps Short Drop</span>
+            </button>
+          </div>
+
+          <div class="regime-content-grid">
+            <!-- Left Card: Curve Shape Canvas & Macro Drivers -->
+            <div class="regime-chart-card">
+              <div class="regime-card-header">
+                <div>
+                  <span class="regime-tag" id="regimeBadge">Expansionary Regime</span>
+                  <h3 id="regimeTitle">Normal Upward Sloping Curve</h3>
+                </div>
+                <div class="regime-spread-pill" id="regimeSpreadPill">
+                  10Y &minus; 3M Spread: <strong>+1.50%</strong>
+                </div>
+              </div>
+              <canvas id="regimeCanvas" width="600" height="220" aria-label="Yield Curve Shape Canvas"></canvas>
+              <div class="regime-context-box" id="regimeContext">
+                <strong>Macro Drivers:</strong> Economic expansion with stable inflation. The Fed maintains a neutral overnight rate while long-term bond buyers demand higher term premiums for holding duration.
+              </div>
+            </div>
+
+            <!-- Right Card: NII Decomposition & Bars -->
+            <div class="regime-impact-card">
+              <div class="regime-card-header">
+                <div>
+                  <p class="eyebrow" style="margin-bottom:2px;">Desk NII Decomposition</p>
+                  <h3>Net Interest Income Distribution</h3>
+                </div>
+                <div class="regime-nii-total">
+                  <span>Total Bank NII:</span>
+                  <strong id="regimeTotalNii">$525,000</strong>
+                  <small id="regimeTotalNim">(5.25% NIM)</small>
+                </div>
+              </div>
+
+              <!-- Multi-desk bars -->
+              <div class="nii-bars-list">
+                <!-- Desk 1: Commercial Lending -->
+                <div class="nii-bar-item">
+                  <div class="nii-bar-labels">
+                    <span class="desk-dot" style="background:#d8b45f;"></span>
+                    <span>Commercial Lending (Credit Spread)</span>
+                    <strong id="regimeLendingVal">$190,000 (+1.90%)</strong>
+                  </div>
+                  <div class="bar-track">
+                    <div class="bar-fill bar-loan" id="barRegimeLoan" style="width: 36%;"></div>
+                  </div>
+                </div>
+
+                <!-- Desk 2: Retail Deposits -->
+                <div class="nii-bar-item">
+                  <div class="nii-bar-labels">
+                    <span class="desk-dot" style="background:#2dd4bf;"></span>
+                    <span>Deposit Branch (Franchise Liquidity Value)</span>
+                    <strong id="regimeDepositVal">$285,000 (+2.85%)</strong>
+                  </div>
+                  <div class="bar-track">
+                    <div class="bar-fill bar-deposit" id="barRegimeDeposit" style="width: 54%;"></div>
+                  </div>
+                </div>
+
+                <!-- Desk 3: Central Treasury -->
+                <div class="nii-bar-item">
+                  <div class="nii-bar-labels">
+                    <span class="desk-dot" style="background:#a78bfa;"></span>
+                    <span>Central Treasury (Term Repricing Spread)</span>
+                    <strong id="regimeTreasuryVal">$50,000 (+0.50%)</strong>
+                  </div>
+                  <div class="bar-track">
+                    <div class="bar-fill bar-treasury" id="barRegimeTreasury" style="width: 10%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Verdict & FTP Takeaway -->
+              <div class="regime-verdict" id="regimeVerdict">
+                <strong>Why FTP Matters Here:</strong> In a steep curve, Central Treasury earns positive carry (+0.50%) on maturity transformation. Without FTP, management might mistakenly credit loan officers for Treasury's steep-curve windfall.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6: Deep Dive Concepts & FAQ -->
       <section id="deep-dive" class="section">
         <div class="section-head">
           <p class="section-label">Core Concepts</p>
